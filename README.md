@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# Lab: React API using Axios
+In this tutorial you’ll use the Axios library to call an API from a React app. You’ll start with the API jsonplaceholder.typicode.com/users, which is a sample publicly available API used for educational purposes.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+1. Enter https://jsonplaceholder.typicode.com/users in a browser. You’ll see that it returns a list of users in JSON format. The brackets denote a list, curly brackets an object. In this lab, you’ll create a React app that “consumes” the info from the API, i.e., calls the API and lists the info.
+2. Build the React app:
 
-## Available Scripts
+Create a new React project. From the command-line:
 
-In the project directory, you can run:
+```bash
+npx create-react-app simple-api-call-axios
+cd simple-api-call-axios
+```
 
-### `npm start`
+Install axios. At the command line:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```jsx
+npm install axios
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Replace the app.js in the generated code with:
 
-### `npm test`
+```jsx
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+function UsersComponent() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-### `npm run build`
+  useEffect(() => {
+    // Using Axios to fetch data
+    axios.get('https://jsonplaceholder.typicode.com/users')
+      .then(response => {
+        setUsers(response.data);  // Axios packs the response in a 'data' property
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  return (
+    <div>
+      <h1>Users</h1>
+      <ul>
+        {users.map(user => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+export default UsersComponent;
+```
 
-### `npm run eject`
+run locally with “npm start” from the main project folder. Does it list the names returned by the API?
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Coding Exercises
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Modify the React code above by having it display each user’s email and city as well as the name.
+2. Another public api is https://dog.ceo/api/breeds/image/random. Type that into a browser.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   It returns json with a single object and two fields, “message” and “status”.
+   `{"message":"https:\/\/images.dog.ceo\/breeds\/sheepdog-shetland\/n02105855_14781.jpg","status":"success"}`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   The “message” is a URL to a dog picture. Note that “\” is the escape character.
 
-## Learn More
+   Create a new React app and paste in the sample code above as the app.js, then modify it to have it show the picture that is randomly returned from the dog api. Note that you’ll want to change the URL in the axios call to the dog one, and you’ll want to modify the code in the return near the bottom— the JSON coming back isn’t a list, its a single object, and you really only care about the “message” from that single object.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+3. Consider the API call: https://springdatastoresample-398023.uw.r.appspot.com/findAllBooks. Create a new React app that lists the books returned from that call.
